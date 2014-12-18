@@ -406,6 +406,20 @@ assert('IO#close_on_exec') do
   # end
 end
 
+assert('IO#isatty') do
+  fd = IO.sysopen "/dev/tty", "w"
+  io = IO.new fd, "w"
+  assert_equal(true, io.isatty)
+  io.close
+  io.closed?
+  
+  fd = IO.sysopen $mrbtest_io_wfname, "w"
+  io = IO.new fd, "w"
+  assert_equal(false, io.isatty)
+  io.close
+  io.closed?
+end
+
 assert('`cmd`') do
   assert_equal `echo foo`, "foo\n"
 end

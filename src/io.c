@@ -834,6 +834,14 @@ mrb_io_sync(mrb_state *mrb, mrb_value self)
   return mrb_bool_value(fptr->sync);
 }
 
+mrb_value
+mrb_io_isatty(mrb_state *mrb, mrb_value io)
+{
+  struct mrb_io *fptr;
+  fptr = (struct mrb_io *)mrb_get_datatype(mrb, io, &mrb_io_type);
+  return (isatty(fptr->fd) == 0) ? mrb_false_value() : mrb_true_value();
+}
+
 void
 mrb_init_io(mrb_state *mrb)
 {
@@ -862,7 +870,9 @@ mrb_init_io(mrb_state *mrb)
   mrb_define_method(mrb, io, "closed?",    mrb_io_closed,     MRB_ARGS_NONE());   /* 15.2.20.5.2 */
   mrb_define_method(mrb, io, "pid",        mrb_io_pid,        MRB_ARGS_NONE());   /* 15.2.20.5.2 */
   mrb_define_method(mrb, io, "fileno",     mrb_io_fileno,     MRB_ARGS_NONE());
+  mrb_define_method(mrb, io, "isatty",     mrb_io_isatty,     MRB_ARGS_NONE());
 
+  mrb_define_alias(mrb,  io, "tty?", "isatty");
 
   mrb_gv_set(mrb, mrb_intern_cstr(mrb, "$/"), mrb_str_new_cstr(mrb, "\n"));
 }
